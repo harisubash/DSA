@@ -8,6 +8,14 @@
  *
  *   Menu driven Program to create a doubly linked list with dynamic functionality
  *
+ *  STATUS: INCOMPLETE
+ *
+ *  ISSUES:
+ *
+ *  1. Sort Function has not been added.
+ *
+ *  2. Swap Function is probably the worst piece of code ever written ,but, I cannot seem to be able to come up with a better way.
+ *
  *  NOTE: List numbering starts from 0.
  *
  *
@@ -42,6 +50,7 @@ class doublyll
     void print_forward();
     void print_reverse();
 //    void sort();
+    void swap(int a,int b);
     int search(int key);
     int count();
 
@@ -144,7 +153,20 @@ int main()
                  cout<<"Numberof Elements in List : "<<List.count()<<endl;
                  break;
 
-         case 10:  exit(0);
+         case 10: if(List.isEmpty())
+                     {
+                         cout<<"The List is Empty"<<endl;
+                         break;
+                     }
+                    else
+                    {
+                    int pos1,pos2;
+                    cout<<"Enter the positions of the nodes of to be swapped "<<endl;
+                    cin>>pos1>>pos2;
+                    List.swap(pos1,pos2);
+                    break;
+                    }
+        case 11:  exit(0);
          default: cout<<"Invalid Response"<<endl<<"Enter your response again"<<endl<<endl;
         }
     }
@@ -330,4 +352,146 @@ while(ptr!=NULL)
     pos++;
 }
 return -1;
+}
+
+void doublyll::swap(int pos1,int pos2)
+{
+  Node *ptr1,*ptr2,*loc;
+  Node *temp1,*temp2;
+  temp1=new Node;
+  temp2=new Node;
+  int N=count();
+  int i=0;
+
+  if((pos1<0)||(pos1>N-1)||(pos2<0)||(pos2>N-1))
+  {
+      cout<<"Invalid Position . "<<endl;
+      return;
+  }
+  if((pos1==pos2))
+  {
+      cout<<"Same Position "<<endl;
+      return;
+  }
+
+  loc=head;
+  i=0;
+  while((i<pos1))
+       {
+          loc=loc->next;
+          i++;
+       }
+  ptr1=loc;
+  strcpy(temp1->name,ptr1->name);
+  temp1->roll=ptr1->roll;
+
+  loc=head;
+  i=0;
+  while((i<pos2))
+       {
+          loc=loc->next;
+          i++;
+       }
+  ptr2=loc;
+  strcpy(temp2->name,ptr2->name);
+  temp2->roll=ptr2->roll;
+
+  cout<<"clear"<<endl;
+  if((pos1==0)||(pos1==N-1)||(pos2==0)||(pos2==N-1))
+  {
+
+      // If one of the element to be switched is the first element , then
+      // we need to consider that head->prev=NULL
+      if((pos1==0)||(pos2==0))
+      {
+          if(pos1==0)
+          {
+             head=temp2;
+             (ptr1->next)->prev=temp2;
+             temp2->next=ptr1->next;
+             temp2->prev=NULL;
+
+             if(pos2==N-1)
+               {
+                   tail=temp1;
+                   temp1->next=NULL;
+                   temp1->prev=ptr2->prev;
+                   (ptr2->prev)->next=temp1;
+               }
+             else
+            {
+               temp1->prev=ptr2->prev;
+               temp1->next=ptr2->next;
+              (ptr2->prev)->next=temp1;
+              (ptr2->next)->prev=temp1;
+             }
+          }
+          else if(pos2==0)
+          {
+             head=temp1;
+             (ptr2->next)->prev=temp1;
+             temp1->prev=NULL;
+             temp1->next=ptr2->next;
+             if(pos1==N-1)
+             {
+                 tail=temp2;
+                 temp2->next=NULL;
+                 temp2->prev=ptr1->prev;
+                 (ptr1->prev)->next=temp2;
+             }
+             else
+             {
+                temp2->next=ptr1->next;
+                temp2->prev=ptr1->prev;
+                (ptr1->prev)->next=temp2;
+                (ptr1->next)->prev=temp2;
+             }
+          }
+       }
+      else
+      {
+              if(pos2==N-1)
+                {
+                   tail=temp1;
+                   temp1->next=NULL;
+                   temp1->prev=ptr2->prev;
+                   (ptr2->prev)->next=temp1;
+
+                   temp2->prev=ptr1->prev;
+                   temp2->next=ptr1->next;
+                   (ptr1->prev)->next=temp2;
+                   (ptr1->next)->prev=temp2;
+
+                }
+                else if(pos1==N-1)
+                   {
+
+                       tail=temp2;
+                       temp2->next=NULL;
+                       temp2->prev=ptr1->prev;
+                       (ptr1->prev)->next=temp2;
+
+                       temp1->prev=ptr2->prev;
+                       temp1->next=ptr2->next;
+                       (ptr2->prev)->next=temp1;
+                       (ptr2->next)->prev=temp1;
+                   }
+                   else
+                   {
+                       (ptr1->prev)->next=temp2;
+                      (ptr1->next)->prev=temp2;
+                   }
+        }
+  }
+  else
+  {
+      temp1->next=ptr2->next;
+      temp1->prev=ptr2->prev;
+      temp2->prev=ptr1->prev;
+      temp2->next=ptr1->next;
+      (ptr1->prev)->next=temp2;
+      (ptr1->next)->prev=temp2;
+      (ptr2->prev)->next=temp1;
+      (ptr2->next)->prev=temp1;
+  }
 }
